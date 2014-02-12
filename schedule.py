@@ -144,7 +144,7 @@ def sort_and_match(name_available, block_avail):
             count += len(name_available[person][date])
         name_sort.append((person, count))
 
-    for person in sorted(name_sort, key=lambda x:x[1] ):
+    for person in sorted(name_sort, key=lambda x:x[1]):
         found = False
         for time_date in sorted(most_popular, key=lambda x: x[2]):
             if(close_enough_in_date(time_date[1], name_available[person[0]][time_date[0]])):
@@ -204,13 +204,43 @@ def float_mil_to_actual(time):
         actual = "00"
     return "{0}:{1}".format(final_time, actual)
 
+def write_to_csv(outfile, matching_dict, block_avail):
+    csv_out = []
+    header_row = ["times"]
+    sorted_dates = sorted(block_avail.keys(), key=lambda x: x[5::]) 
+    #clever way to sort by date!
+    for key in sorted_dates:
+        header_row.append(key)
+    csv_out.append(header_row)
+
+    set_accum = []
+    for date in block_avail:
+        set_accum += block_avail[date]
+    set_accum = sorted(list(set(set_accum))) #remove duplicates
+
+    for time in set_accum:
+        date_time = [time] 
+        date_time += ["Free_Time"]*(len(header_row[1::])) #len of header -1
+        csv_out.append(date_time)
+
+    for date in matching_dict:
+        for time in matching_dict[date]:
+            time_pos = set_accum.indexOf(time) + 1
+            date_pos = sorted_dates.indexOf[date] + 1
+            csv_out[time_pos][date_pos] = matching_dict[date][time]
+
+
+
+
+
 def main():
     name_exclude = parse_csv("test_schedule_1.csv")
     block_avail = coordinator_availability((15, 5))
     name_available = available_times(name_exclude, block_avail)
-    final = sort_and_match(name_available, block_avail)
-    print final[0]
-    print final[1]
+    matching_dict, not_matched = sort_and_match(name_available, block_avail)
+    print matching_dict
+    print not_matched
+    write_to_csv("out.csv", matching_dict, block_avail)
 
 if __name__ == "__main__":
     main()
