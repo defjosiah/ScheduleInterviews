@@ -34,10 +34,12 @@ coord_avail = {
 def coordinator_availability(pattern):
     """
     Input: pattern is a tuple of (interview length, break)
+    in minutes
     Using the coordinator availability dictionary above, and 
     a given pattern, split the interview availability into 
     pattern specific block, output is dictionary of form 
-    --(date) : [available blocks]--
+    --(date) : [available blocks]-- blocks are start times in 
+    (hour.decimal_minutes) format
     """
 
     int_length = pattern[0]
@@ -55,4 +57,5 @@ def coordinator_availability(pattern):
         block_avail[date] = times
     return block_avail
 
-print coordinator_availability((15, 5))
+def compare_close(a, b, error):
+    return abs(a-b) < error
