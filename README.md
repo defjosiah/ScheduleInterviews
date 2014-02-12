@@ -12,3 +12,6 @@ files from the duncaroos@gmail folder.
 (e.g. 15 minutes w/ 5 minute breaks)
 3. Turn candidate preferences into acceptable interview
 times
+
+(Optional)
+Turn back into Google Doc spreadsheet
