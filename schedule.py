@@ -113,24 +113,68 @@ def available_times(name_exclude, block_avail):
     """ 
     name_available = {}
     for person in name_exclude:
-        available_interviews = []
+        available_interviews = {}
         for date in name_exclude[person]:
+            available_interviews[date] = []
             for available in block_avail[date]:
                 if( not is_in(available, name_exclude[person][date]) ):
-                    available_interviews.append(available)
+                    available_interviews[date].append(available)
         name_available[person] = available_interviews
     return name_available
 
 def sort_and_match(name_available, block_avail):
     """
     Match by available_times
+    Return dict: (Date) : {time: person}
     """
-    for person in sorted(name_available, key=lambda x: len(name_available[x])):
-        print person
+    most_popular = get_most_popular(name_available, block_avail)
+
+    matching_dict = {}
+    not_matched = []
+    for date in block_avail:
+        matching_dict[date] = {}
+
+    for person in name_available:
+        found = False
+        for time_date in sorted(most_popular, key=lambda x: x[2]):
+            if(time_date[1] in name_available[person][time_date[0]]): #float comparison issue
+                matching_dict[time_date[0]][time_date[1]] = person
+                most_popular.remove(time_date)
+                found = True
+                break
+        if found == False:
+            not_matched.append(person)
+    return matching_dict, not_matched
+
+
+
+def get_most_popular(name_available, block_avail):
+
+    popular = {}
+    for date in block_avail:
+        popular[date] = {}
+    for date in popular:
+        for entry in block_avail[date]:
+            popular[date][entry] = 0 
+
+    for name in name_available:
+        for date in name_available[name]:
+            for entry in name_available[name][date]:
+                popular[date][entry] += 1
+    
+    return_list = []
+    for date in popular:
+        for entry in popular[date]:
+            return_list.append( (date, entry, popular[date][entry]) )
+
+    return return_list
 
 
 
 name_exclude = parse_csv("test_schedule_1.csv")
 block_avail = coordinator_availability((15, 5))
 name_available = available_times(name_exclude, block_avail)
-sort_and_match(name_available, block_avail)
+final = sort_and_match(name_available, block_avail)
+print final[0]
+print final[1]
+
