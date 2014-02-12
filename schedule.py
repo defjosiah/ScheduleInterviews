@@ -144,9 +144,9 @@ def sort_and_match(name_available, block_avail):
                 break
         if found == False:
             not_matched.append(person)
+
+    pretty_print_date(matching_dict, most_popular)
     return matching_dict, not_matched
-
-
 
 def get_most_popular(name_available, block_avail):
 
@@ -169,6 +169,23 @@ def get_most_popular(name_available, block_avail):
 
     return return_list
 
+def pretty_print_date(matching_dict, most_popular):
+    for date in sorted(matching_dict, key=lambda x: x):
+        print date + ":"
+        for time in sorted(matching_dict[date], key=lambda x: x):
+            print "\t {0} -- {1}".format(float_mil_to_actual(time), 
+                                            matching_dict[date][time])
+
+def float_mil_to_actual(time):
+    if(time > 12.0):
+        final_time = int(time - 12.0)
+    else:
+        final_time = int(time)
+    decimal = time % 1
+    actual = int(round(decimal * 60))
+    if(actual == 0):
+        actual = "00"
+    return "{0}:{1}".format(final_time, actual)
 
 
 name_exclude = parse_csv("test_schedule_1.csv")
