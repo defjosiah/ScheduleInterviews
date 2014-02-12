@@ -134,19 +134,35 @@ def sort_and_match(name_available, block_avail):
     for date in block_avail:
         matching_dict[date] = {}
 
+    #create list using least number of 
+    #available dates
+    #match hardest first
+    name_sort = []
     for person in name_available:
+        count = 0
+        for date in name_available[person]:
+            count += len(name_available[person][date])
+        name_sort.append((person, count))
+
+    for person in sorted(name_sort, key=lambda x:x[1] ):
         found = False
         for time_date in sorted(most_popular, key=lambda x: x[2]):
-            if(time_date[1] in name_available[person][time_date[0]]): #float comparison issue
-                matching_dict[time_date[0]][time_date[1]] = person
+            if(close_enough_in_date(time_date[1], name_available[person[0]][time_date[0]])):
+                matching_dict[time_date[0]][time_date[1]] = person[0]
                 most_popular.remove(time_date)
                 found = True
                 break
         if found == False:
-            not_matched.append(person)
+            not_matched.append(person[0])
 
-    pretty_print_date(matching_dict, most_popular)
+    pretty_print_interviews(matching_dict)
     return matching_dict, not_matched
+
+def close_enough_in_date(time, time_list):
+    for x in time_list:
+        if(compare_close(time, x, 0.001)):
+            return True
+    return False
 
 def get_most_popular(name_available, block_avail):
 
@@ -169,7 +185,8 @@ def get_most_popular(name_available, block_avail):
 
     return return_list
 
-def pretty_print_date(matching_dict, most_popular):
+def pretty_print_interviews(matching_dict):
+    print "Interview Times"
     for date in sorted(matching_dict, key=lambda x: x):
         print date + ":"
         for time in sorted(matching_dict[date], key=lambda x: x):
@@ -187,11 +204,14 @@ def float_mil_to_actual(time):
         actual = "00"
     return "{0}:{1}".format(final_time, actual)
 
+def main():
+    name_exclude = parse_csv("test_schedule_1.csv")
+    block_avail = coordinator_availability((15, 5))
+    name_available = available_times(name_exclude, block_avail)
+    final = sort_and_match(name_available, block_avail)
+    print final[0]
+    print final[1]
 
-name_exclude = parse_csv("test_schedule_1.csv")
-block_avail = coordinator_availability((15, 5))
-name_available = available_times(name_exclude, block_avail)
-final = sort_and_match(name_available, block_avail)
-print final[0]
-print final[1]
+if __name__ == "__main__":
+    main()
 
