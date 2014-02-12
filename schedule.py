@@ -25,12 +25,12 @@ Interview Scheduler
 # (date) : [(start, end),(start, end)]
 # TODO: remove hard-coded form of coord_avail
 coord_avail = { 
-        ("Fri 14th") : [(15.0, 18.0)],
-        ("Sat 15th") : [(10.0, 19.0)],
-        ("Sun 16th") : [(10.0, 14,0), (19.0, 21.0)],
-        ("Fri 21st") : [(15.0, 20.0)],
-        ("Sat 22nd") : [(10.0, 19.0)],
-        ("Sun 23rd") : [(10.0, 14,0), (19.0, 21.0)]
+        ('Fri  14th') : [(15.0, 18.0)],
+        ('Sat  15th') : [(10.0, 19.0)],
+        ('Sun  16th') : [(10.0, 14,0), (19.0, 21.0)],
+        ('Fri  21st') : [(15.0, 20.0)],
+        ('Sat  22nd') : [(10.0, 19.0)],
+        ('Sun  23rd') : [(10.0, 14,0), (19.0, 21.0)]
     }
 
 def parse_csv(filename):
@@ -46,7 +46,7 @@ def parse_csv(filename):
     b
     c 
     """
-    name_exlude = {}
+    name_exclude = {}
     dates = []
     with open(filename, 'rb') as csvfile:
         schedule_reader = csv.reader(csvfile, delimiter=',')
@@ -61,8 +61,8 @@ def parse_csv(filename):
                     for k in range(0, len(no_work), 2):
                         temp.append((float(no_work[k]), float(no_work[k+1])))
                     exclude[date] = temp
-                name_exlude[row[0]] = exclude
-    return name_exlude
+                name_exclude[row[0]] = exclude
+    return name_exclude
 
 
 
@@ -98,4 +98,39 @@ def coordinator_availability(pattern):
 def compare_close(a, b, error):
     return abs(a-b) < error
 
-print parse_csv("test_schedule_1.csv")
+def is_between(start_end, time):
+    return time >= start_end[0] and time <= start_end[1] 
+
+def is_in(available, excluded_times):
+    test = []
+    for time in excluded_times:
+        test.append( is_between(time, available) )
+    return any(test)
+
+def available_times(name_exclude, block_avail):
+    """
+    return: (name) : {(dates) : times}
+    """ 
+    name_available = {}
+    for person in name_exclude:
+        available_interviews = []
+        for date in name_exclude[person]:
+            for available in block_avail[date]:
+                if( not is_in(available, name_exclude[person][date]) ):
+                    available_interviews.append(available)
+        name_available[person] = available_interviews
+    return name_available
+
+def sort_and_match(name_available, block_avail):
+    """
+    Match by available_times
+    """
+    for person in sorted(name_available, key=lambda x: len(name_available[x])):
+        print person
+
+
+
+name_exclude = parse_csv("test_schedule_1.csv")
+block_avail = coordinator_availability((15, 5))
+name_available = available_times(name_exclude, block_avail)
+sort_and_match(name_available, block_avail)
