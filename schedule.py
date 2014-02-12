@@ -219,18 +219,19 @@ def write_to_csv(outfile, matching_dict, block_avail):
     set_accum = sorted(list(set(set_accum))) #remove duplicates
 
     for time in set_accum:
-        date_time = [time] 
-        date_time += ["Free_Time"]*(len(header_row[1::])) #len of header -1
+        date_time = [float_mil_to_actual(time)] 
+        date_time += ["--"]*(len(header_row[1::])) #len of header -1
         csv_out.append(date_time)
 
     for date in matching_dict:
         for time in matching_dict[date]:
-            time_pos = set_accum.indexOf(time) + 1
-            date_pos = sorted_dates.indexOf[date] + 1
+            time_pos = set_accum.index(time) + 1
+            date_pos = sorted_dates.index(date) + 1
             csv_out[time_pos][date_pos] = matching_dict[date][time]
 
-
-
+    with open(outfile, 'w') as fp:
+        a = csv.writer(fp, delimiter=',')
+        a.writerows(csv_out)
 
 
 def main():
@@ -238,8 +239,6 @@ def main():
     block_avail = coordinator_availability((15, 5))
     name_available = available_times(name_exclude, block_avail)
     matching_dict, not_matched = sort_and_match(name_available, block_avail)
-    print matching_dict
-    print not_matched
     write_to_csv("out.csv", matching_dict, block_avail)
 
 if __name__ == "__main__":
