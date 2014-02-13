@@ -171,7 +171,7 @@ def sort_and_match(name_available, block_avail):
 
     return matching_dict, not_matched
 
-def write_to_csv(outfile, matching_dict, block_avail):
+def write_to_csv(outfile, matching_dict, block_avail, not_matched):
     csv_out = []
     header_row = ["times"]
     sorted_dates = sorted(block_avail.keys(), key=lambda x: x[5::]) 
@@ -196,6 +196,12 @@ def write_to_csv(outfile, matching_dict, block_avail):
             date_pos = sorted_dates.index(date) + 1
             csv_out[time_pos][date_pos] = matching_dict[date][time]
 
+    
+    blank_row = ["Not Matched"] + ["-----"]*(len(header_row))
+    not_matched = [" "] + not_matched 
+    csv_out.append(blank_row)
+    csv_out.append(not_matched)
+        
     with open(outfile, 'w') as fp:
         a = csv.writer(fp, delimiter=',')
         a.writerows(csv_out)
@@ -310,7 +316,7 @@ def main():
     block_avail = coordinator_availability((15, 5))
     name_available = available_times(name_exclude, block_avail)
     matching_dict, not_matched = sort_and_match(name_available, block_avail)
-    write_to_csv("csv/out.csv", matching_dict, block_avail)
+    write_to_csv("csv/out.csv", matching_dict, block_avail, not_matched)
 
 if __name__ == "__main__":
     main()
