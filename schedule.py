@@ -1,4 +1,5 @@
 import csv
+import math
 
 #Josiah Grace
 #O-Week 2014 Scheduling
@@ -196,17 +197,19 @@ def write_to_csv(outfile, matching_dict, block_avail, not_matched):
             date_pos = sorted_dates.index(date) + 1
             csv_out[time_pos][date_pos] = matching_dict[date][time]
 
-    
     blank_row = ["Not Matched"] + ["-----"]*(len(header_row)-1)
-    blank_names = ["-----"] * (len(header_row))
-
-    i = 1;
-    for entry in not_matched:
-    	blank_names[i] = entry
-    	i += 1
-
     csv_out.append(blank_row)
-    csv_out.append(blank_names)
+    offset = len(csv_out)
+
+    for i in range( int(math.ceil(len(not_matched) / (len(header_row))))):
+    	blank_names = ["-----"] * (len(header_row))
+    	csv_out.append(blank_names)
+
+    matched = 0
+    for i in range( int(math.ceil(len(not_matched) / (len(header_row))))):
+        for j in range(len(header_row)):
+            csv_out[i+offset][j] = not_matched[matched]
+            matched += 1
         
     with open(outfile, 'w') as fp:
         a = csv.writer(fp, delimiter=',')
