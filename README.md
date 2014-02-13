@@ -1,7 +1,8 @@
-#scheduleInterviews
-==================
+#ScheduleInterviews
 
 ##Transform interview time preferences from google docs into scheduled times
+#Uses a scheduling heuristic that matches applicants with the least availability
+#to interview times that are least popular. 
 
 (Optional) 
 Access the Google Docs API in order to download the CSV
