@@ -198,7 +198,13 @@ def write_to_csv(outfile, matching_dict, block_avail, not_matched):
 
     
     blank_row = ["Not Matched"] + ["-----"]*(len(header_row)-1)
-    not_matched = ["--"] + not_matched + ["--"]*(len(header_row) - len(not_matched) - 1)
+    blank_names = ["-----"] * (len(header_row)-1)
+
+    i = i;
+    for entry in not_matched:
+    	blank_names[i] = entry
+    	i += 1
+    	
     csv_out.append(blank_row)
     csv_out.append(not_matched)
         
