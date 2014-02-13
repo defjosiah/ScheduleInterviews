@@ -2,6 +2,7 @@ import csv
 
 #Josiah Grace
 #O-Week 2014 Scheduling
+#2/11/14 - 2/12/14
 
 
 """
