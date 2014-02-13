@@ -305,11 +305,11 @@ def is_in(available, excluded_times):
 #########################################################
 
 def main():
-    name_exclude = parse_csv("test_schedule_1.csv")
+    name_exclude = parse_csv("csv/test_schedule_1.csv")
     block_avail = coordinator_availability((15, 5))
     name_available = available_times(name_exclude, block_avail)
     matching_dict, not_matched = sort_and_match(name_available, block_avail)
-    write_to_csv("out.csv", matching_dict, block_avail)
+    write_to_csv("csv/out.csv", matching_dict, block_avail)
 
 if __name__ == "__main__":
     main()
