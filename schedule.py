@@ -197,7 +197,7 @@ def write_to_csv(outfile, matching_dict, block_avail, not_matched):
             csv_out[time_pos][date_pos] = matching_dict[date][time]
 
     
-    blank_row = ["Not Matched"] + ["-----"]*(len(header_row))
+    blank_row = ["Not Matched"] + ["-----"]*(len(header_row)-1)
     not_matched = [" "] + not_matched 
     csv_out.append(blank_row)
     csv_out.append(not_matched)
